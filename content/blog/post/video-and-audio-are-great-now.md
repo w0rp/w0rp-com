@@ -1,6 +1,7 @@
 ---
 title: Video and Audio Are Great Now!
 date: 2023-02-14 08:14:00
+tags: ["html5"]
 ---
 
 I just wanted to write a mini post as a reminder about how great the world is now (in one respect), because [&lt;video&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video) and [&lt;audio&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio) work fantastically in web browsers these days. There was once a long and crazy battle between `.webm` and `.mp4`. It's a fascinating topic in of itself, but essentially every browser, mobile, and computer vendor was fighting a ding-dong battle about which formats should be used on the web. This meant that HTML5 video and audio just **didn't work** for years and years. I offer no citations because I'm lazy. Long story short, despite having [weird ass scary licencing](https://www.mpegla.com/programs/avc-h-264/), H.264 won as the video format.

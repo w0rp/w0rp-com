@@ -13,10 +13,4 @@ const onDocumentReady = fn => {
 onDocumentReady(() => {
   // Add a class so CSS can do different things when JS is on.
   document.body.classList.add('js')
-
-  const verifyElem = document.getElementById('id_' + 'verify')
-
-  if (verifyElem instanceof HTMLInputElement) {
-    verifyElem.value = '' + (347 * 347)
-  }
 })

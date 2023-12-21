@@ -42,11 +42,10 @@
         {{- partial "footer.html" . -}}
 
         {{ $highlightJS := resources.Get "js/third-party/highlight.pack.js" }}
-        {{ $markedJS := resources.Get "js/third-party/marked.js" }}
         {{ $globalJS := resources.Get "js/global.js" }}
         {{ $highlightCodeJS := resources.Get "js/highlight-code.js" }}
 
-        {{ $js := slice $highlightJS $markedJS $globalJS $highlightCodeJS | resources.Concat "static/js/main-site-bundle.js" | minify | fingerprint }}
+        {{ $js := slice $highlightJS $globalJS $highlightCodeJS | resources.Concat "static/js/main-site-bundle.js" | minify | fingerprint }}
 
         <script
           src="{{ $js.Permalink }}{{ if $assetBusting }}?{{ now.Unix }}{{ end }}"

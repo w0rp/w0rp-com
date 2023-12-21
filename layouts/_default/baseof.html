@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+{{ $assetBusting := not .Site.Params.disableAssetsBusting }}
+  <head>
+    <meta charset="UTF-8" />
+
+    <!-- Licenses for software used in this page. -->
+    <link rel="license" type="text/plain" href="{{ absURL "text/highlight_license" }}" title="Licence for hightlight.js" />
+
+    {{ $droidsansCSS := resources.Get "css/droidsans.css" }}
+    {{ $sourceCodeProCSS := resources.Get "css/source-code-pro.css" }}
+    {{ $highlightCSS := resources.Get "css/highlight-obsidian.css" }}
+    {{ $baseCSS := resources.Get "css/base.css" }}
+    {{ $blogCSS := resources.Get "css/blog.css" }}
+
+    {{ $css := slice $droidsansCSS $sourceCodeProCSS $highlightCSS $baseCSS $blogCSS | resources.Concat "static/css/main-site-bundle.css" | minify | fingerprint }}
+
+    <link rel="stylesheet"
+      href="{{ $css.Permalink }}{{ if $assetBusting }}?{{ now.Unix }}{{ end }}"
+      integrity="{{ $css.Data.Integrity }}"
+    >
+
+    {{- partial "head.html" . -}}
+  </head>
+    <body>
+        {{- partial "header.html" . -}}
+        <div id="main">
+          <div class="content">
+            {{- block "main" . }}{{- end }}
+          </div>
+          <nav>
+            <aside class="article_archive">
+              <header>Archive</header>
+              <ol>
+                {{ range (where .Site.RegularPages "Section" "blog").GroupByDate "January 2006" }}
+                  <li><a href="/blog/date/{{ (index .Pages 0).Date.Format "2006/02" }}/">{{ .Key }}</a></li>
+                {{ end }}
+              </ol>
+            </aside>
+          </nav>
+        </div>
+        {{- partial "footer.html" . -}}
+
+        {{ $highlightJS := resources.Get "js/third-party/highlight.pack.js" }}
+        {{ $markedJS := resources.Get "js/third-party/marked.js" }}
+        {{ $globalJS := resources.Get "js/global.js" }}
+        {{ $highlightCodeJS := resources.Get "js/highlight-code.js" }}
+
+        {{ $js := slice $highlightJS $markedJS $globalJS $highlightCodeJS | resources.Concat "static/js/main-site-bundle.js" | minify | fingerprint }}
+
+        <script
+          src="{{ $js.Permalink }}{{ if $assetBusting }}?{{ now.Unix }}{{ end }}"
+          integrity="{{ $js.Data.Integrity }}"
+        ></script>
+    </body>
+</html>

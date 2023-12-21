@@ -1,0 +1,22 @@
+/*
+ * author: Adobe
+ * url: https://github.com/adobe/source-code-pro
+ */
+
+@font-face {
+    font-family: "Source Code Pro";
+    font-weight: normal;
+
+    src: local("Source Code Pro"), local("SourceCodePro-Regular"),
+         url("/static/font/SourceCodePro-Regular.woff") format("woff"),
+         url("/static/font/SourceCodePro-Regular.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Source Code Pro";
+    font-weight: bold;
+
+    src: local("Source Code Pro Bold"), local("SourceCodePro-Bold"),
+         url("/static/font/SourceCodePro-Bold.woff") format("woff"),
+         url("/static/font/SourceCodePro-Bold.ttf") format("truetype");
+}

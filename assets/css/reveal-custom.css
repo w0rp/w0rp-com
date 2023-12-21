@@ -1,0 +1,54 @@
+.reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+    text-transform: none;
+}
+
+.reveal blockquote {
+    font-style: normal;
+    border-radius: 2em;
+    padding: 0.5em;
+    box-sizing: border-box;
+    quotes: "“" "”" "‘" "’";
+}
+
+.reveal blockquote:before {
+    position: absolute;
+    font-size: 3em;
+    content: open-quote;
+    top: -0.3em;
+    left: -0.3em;
+}
+
+.reveal blockquote > footer {
+    font-style: italic;
+    color: #42AFFA;
+}
+
+.reveal blockquote > footer:before {
+    content: "\2013  ";
+}
+
+.reveal table > thead > tr > th {
+    text-align: center;
+}
+
+.reveal table ul {
+    display: block;
+}
+
+.reveal p code {
+    display: inline;
+    background: inherit;
+}
+
+.reveal table th, .reveal table td {
+    border-bottom: 2px solid;
+}
+
+.reveal table tr:last-child td {
+    border-bottom: 2px solid;
+}
+
+.reveal table {
+    border-collapse: separate;
+    border: 0;
+}

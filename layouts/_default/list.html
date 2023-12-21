@@ -1,0 +1,16 @@
+{{ define "main" }}
+  {{ range (where .Site.RegularPages "Section" "blog") }}
+    <article itemscope itemtype="http://schema.org/Article">
+      <header>
+        <h1 itemprop="name"><a class="article_link" href="{{ .Page.URL }}" itemprop="url" content="{{ .Page.URL }}">{{ .Page.Title }}</a></h1>
+        <ul class="post_metadata">
+          <li class="author">
+            <a class="name" itemprop="author" href="mailto:dev@w0rp.com">w0rp</a>
+          </li><li class="creation_time" itemprop="datePublished" content="{{ .Page.Date.Format "2006-01-02T15:04:05Z0700" }}">
+            {{ .Page.Date.Format "01/02/2006 15:04" }}
+          </li>
+        </ul>
+      </header>
+    </article>
+  {{ end }}
+{{ end }}

@@ -1,0 +1,22 @@
+/*
+ * author: Steven R. Matteson
+ * url: http://www.droidfonts.com/
+ */
+
+@font-face {
+    font-family: "Droid Sans";
+    font-weight: normal;
+
+    src: local("Droid Sans"),
+         url("/static/font/DroidSans.woff") format("woff"),
+         url("/static/font/DroidSans.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Droid Sans";
+    font-weight: bold;
+
+    src: local("Droid Sans Bold"),
+         url("/static/font/DroidSans_Bold.woff") format("woff"),
+         url("/static/font/DroidSans_Bold.ttf") format("truetype");
+}

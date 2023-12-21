@@ -1,0 +1,17 @@
+{{ define "main" }}
+  <article itemscope itemtype="http://schema.org/Article">
+    <header>
+      <h1 itemprop="name">{{ .Title }}</h1>
+      <ul class="post_metadata">
+        <li class="author">
+          <a class="name" itemprop="author" href="mailto:dev@w0rp.com">w0rp</a>
+        </li><li class="creation_time" itemprop="datePublished" content="{{ .Date.Format "2006-01-02T15:04:05Z0700" }}">
+          {{ .Date.Format "01/02/2006 15:04" }}
+        </li>
+      </ul>
+    </header>
+    <div class="post">
+      {{ .Content }}
+    </div>
+  </article>
+{{ end }}

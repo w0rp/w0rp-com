@@ -1,0 +1,413 @@
+/* Tiny screens and up. */
+@media screen {
+    input, textarea {
+        background-color: #111;
+        color: white;
+    }
+
+    textarea {
+        resize: vertical;
+    }
+
+    /* Articles */
+    article:not(:first-child) {
+        margin-top: 1em;
+    }
+
+    article {
+        background-color: #222;
+        color: #eee;
+    }
+
+    article,
+    section.comment {
+        padding: 0.5em 1em;
+        font-size: 14pt;
+
+        word-wrap: break-word;
+    }
+
+    article pre > code,
+    section.comment pre > code {
+        font-size: 10pt;
+    }
+
+    /* Render highlight inline code seemlessly. */
+    article p > code.hljs,
+    section.comment p > code.hljs {
+        display: inline;
+        background: inherit;
+        padding: 0;
+    }
+
+    article > .post a {
+        color: #84D284;
+        text-decoration: none;
+    }
+
+    article > .post a:before {
+        /* Right arrow, space */
+        content: "\2192\a0";
+    }
+
+    article > .post figure {
+        display: block;
+    }
+
+    article > .post figure a.image-link:before  {
+        content: "";
+    }
+
+    article > .post figure img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    article > .post figure figcaption:empty {
+        display: none;
+    }
+
+    article h2,
+    article h3,
+    article h4,
+    article h5 {
+        margin: 0.5em 0;
+    }
+
+    article strong,
+    section.comment strong {
+        font-weight: bold;
+        color: #afa;
+    }
+
+    /* Article tables */
+    article table {
+        border-collapse:collapse
+    }
+
+    article table th {
+       text-align: left;
+    }
+
+    article table td, article table th {
+       padding: 0.2em 0.5em;
+       background-color: #323232;
+    }
+
+    article table td:first-child, article table th:first-child {
+       background-color: #262626;
+    }
+
+    /* The article header */
+
+    article > header {
+        margin-bottom: 0.25em;
+    }
+
+    article > header h1 {
+        margin: 0.5em 0;
+        font-size: 18pt;
+    }
+
+    article > header > .button {
+        display: table;
+        margin-top: 0.5em;
+    }
+
+    article > header .article_link {
+        text-decoration: none;
+    }
+
+    article > header .article_link:hover {
+        text-decoration: underline;
+    }
+
+    section.post > p,
+    section.post > ul li,
+    section.comment_body > p,
+    section.comment_body > ul li {
+        line-height: 1.5em;
+    }
+
+    section.post > ul li,
+    section.comment_body > ul li {
+        margin-bottom: 0.5em;
+    }
+
+    article > section.post > blockquote {
+        margin-left: 0;
+        margin-right: 0;
+        padding: 1em 0.5em;
+
+        border-left: 1em solid #333;
+        background-color: #2A2A34;
+
+        quotes: "\201C" "" "\2018" "\2019";
+    }
+
+    article > section.post > blockquote:before {
+        content: open-quote;
+
+        font-size: 2em;
+        margin-right: 0.5em;
+
+        vertical-align: -0.25em;
+        line-height: 0.25em;
+    }
+
+    article > section.post > blockquote:after {
+        content: close-quote;
+    }
+
+    article > section.post > blockquote > p {
+        display: inline;
+    }
+
+    article > section.post > blockquote > cite {
+        display: block;
+        margin-top: 1em;
+    }
+
+    ul.post_metadata {
+        margin: 0;
+        padding: 0.125em 0.25em;
+        margin-bottom: 0.5em;
+
+        background-color: #262626;
+        color: #4C8E79;
+
+        font-family: "Source Code Pro", monospace;
+    }
+
+    ul.post_metadata > li {
+        display: inline-block;
+        margin: 0;
+    }
+
+    ul.post_metadata > li.author {
+        margin-right: 16px;
+    }
+
+    ul.post_metadata > li.author > .name {
+        font-style: normal;
+        text-decoration: none;
+        color: #4CBE79;
+    }
+
+    ul.post_metadata > li.author > .name:before {
+        content: "by ";
+    }
+
+    ul.post_metadata > li.creation_time {
+    }
+
+    ul.post_metadata > li.creation_time:before {
+        content: "on ";
+    }
+
+    section.comment_list > h2 {
+        margin: 0.5em 0 0 0;
+
+        font-size: 24pt;
+    }
+
+    section.comment_list .markdown_help a {
+        color: #84D284;
+        text-decoration: none;
+    }
+
+    section.comment_list .markdown_help a:before {
+        /* Right arrow, space */
+        content: "\2192\a0";
+    }
+
+    section.comment_list .markdown_help pre code {
+        font-size: 14pt;
+    }
+
+    section.comment_list .markdown_help.brief {
+        display: none;
+    }
+
+    section.comment_list .markdown_help.brief.active {
+        display: block;
+    }
+
+    section.comment_list .markdown_help.full {
+        display: none;
+    }
+
+    section.comment_list .markdown_help.full.active {
+        display: block;
+    }
+
+    section.comment_list .markdown_help.full .help_topic {
+        display: none;
+    }
+
+    section.comment_list .markdown_help.full .help_topic.active {
+        display: block;
+    }
+
+    section.comment_list .markdown_help .help_tabs .tab.active {
+        background-color: #447;
+        color: #FFF;
+    }
+
+    section.comment_list .markdown_help .help_tabs .tab {
+        cursor: pointer;
+    }
+
+    section.comment {
+        background-color: #222;
+        color: #eee;
+    }
+
+    section.comment:not(.first) {
+        margin-top: 1em;
+    }
+
+    section.comment.preview {
+        display: none;
+    }
+
+    section.comment > header a {
+        cursor: inherit;
+    }
+
+    section.comment > header > .buttons {
+        display: block;
+        margin: 0.5em 0 1em 0;
+    }
+
+    section.comment > header .poster_name {
+        display: block;
+        font-size: 2em;
+    }
+
+    /* The blog site footer */
+    body > footer {
+        clear: both;
+
+        padding: 1em;
+        margin-bottom: 2em;
+
+        background-color: #2b2b2b;
+        color: white;
+    }
+
+    body > footer > * {
+        font-size: 10pt;
+    }
+
+    body > footer > .license {
+        text-align: center;
+    }
+
+    body > footer > .license * {
+        vertical-align: middle;
+    }
+
+    body > footer > .license a.license_image_link {
+        text-decoration: none;
+
+        margin-right: 1em;
+    }
+}
+
+/* Small size screens and up */
+@media screen and (min-width: 768px) {
+}
+
+/* Medium size screens and up */
+@media screen and (min-width: 960px) {
+    #main > .content > .page_navigation {
+        margin-bottom: 3em;
+    }
+
+    #main > nav > aside.article_archive > ol {
+        font-size: 1em;
+    }
+
+    article:not(:first-child),
+    section.comment {
+        margin-top: 1.5em;
+    }
+
+    article,
+    section.comment {
+        padding: 0.5em 2em;
+    }
+
+    article pre > code,
+    section.comment pre > code {
+        font-size: 10pt;
+
+        margin-left: -0.5em;
+        margin-right: -0.5em;
+    }
+}
+
+/* Large screens */
+@media screen and (min-width: 1200px) {
+}
+
+/* Tiny screens and up. */
+@media screen {
+    #main > .content {
+        margin-bottom: 1em;
+    }
+
+    /* Page navigation in content */
+
+    #main > .content > .page_navigation a {
+        text-decoration: none;
+    }
+
+    #main > .content > .page_navigation > ul {
+        position: relative;
+
+        padding: 0;
+
+        list-style-type: none;
+    }
+
+    #main > .content > .page_navigation > ul > li {
+        position: absolute;
+
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+    }
+
+    #main > .content > .page_navigation > ul > li > a {
+        display: block;
+
+        background-color: #2a2a34;
+        color: white;
+    }
+
+    #main > .content > .page_navigation > ul > .next_page_link {
+        left: 0.25em;
+    }
+
+    #main > .content > .page_navigation > ul > .next_page_link > a {
+        border-radius: 2em 0 0 2em;
+        padding: 0.5em 0.5em 0.5em 0.75em;
+    }
+
+    #main > .content > .page_navigation > ul > .prev_page_link {
+        right: 2em;
+    }
+
+    #main > .content > .page_navigation > ul > .prev_page_link > a {
+        border-radius: 0 2em 2em 0;
+        padding: 0.5em 0.75em 0.5em 0.5em;
+    }
+
+    #main > nav > aside.article_archive > ol {
+        font-family: "Source Code Pro", monospace;
+        font-weight: normal;
+    }
+}

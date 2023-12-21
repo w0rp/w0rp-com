@@ -1,0 +1,261 @@
+/* Tiny screens and up. */
+@media screen {
+    #main > nav > aside > ol {
+        font-family: "Source Code Pro", monospace;
+    }
+
+    #main > nav > menu  {
+        padding: 0 1em;
+    }
+
+    section.documentation,
+    section.project_summary,
+    section.project_list {
+        background-color: #222;
+        padding: 1em;
+        min-height: 10em;
+    }
+
+    #main > nav.module_nav {
+        min-height: 10em;
+    }
+
+    section.project_list > table {
+        width: 100%;
+
+        border-collapse: collapse;
+
+        font-size: 16pt;
+    }
+
+    section.project_list > table > caption {
+        font-size: 18pt;
+        font-weight: bold;
+        padding-bottom: 0.5em;
+    }
+
+    section.project_list > table > thead > tr > * {
+        padding-bottom: 0.5em;
+        border-bottom: 1px solid;
+    }
+
+    section.project_list > table > tbody > tr > * {
+        padding-top: 0.5em;
+    }
+
+    section.project_list > table > * > tr > .name {
+        text-align: left;
+    }
+
+    section.project_list > table > * > tr > .summary {
+        text-align: left;
+    }
+
+    section.project_list > table > * > tr > .time {
+        text-align: right;
+    }
+
+    section.project_list > table > tbody > tr > .time {
+        font-size: 12pt;
+    }
+
+    section.documentation > h1 {
+        font-family: "Source Code Pro", monospace;
+    }
+
+    section.documentation .declaration {
+        font-family: "Source Code Pro", monospace;
+
+        font-size: 12pt;
+
+        color: #eee;
+    }
+
+    body.js section.documentation .declaration.expandable {
+        cursor: pointer;
+    }
+
+    section.documentation .decl_row {
+        position: relative;
+    }
+
+    section.documentation .declaration {
+        margin-left: 1em;
+    }
+
+    section.documentation .declaration .individual {
+        display: block;
+    }
+
+    section.documentation .declaration .individual:not(:first-child) {
+        margin-top: 1em;
+    }
+
+    /*
+     * A little Ditto image from IconArchive.
+     *
+     * author: HEKTakun
+     *
+     * The copyright for Ditto is owned by Nintendo.
+     */
+    section.documentation .declaration .individual:not(:first-child):before {
+        content: "";
+        background-image: url(/static/image/ditto.png);
+        background-size: 1em 1em;
+        width: 1em;
+        height: 1em;
+        position: absolute;
+        left: -0.25em;
+    }
+
+    body.js section.documentation .declaration.expandable:before {
+        content: "+";
+        position: absolute;
+        left: 0px;
+
+        color: #0f4;
+        text-shadow: 4px 2px 5px black;
+    }
+
+    body.js section.documentation .declaration.expandable.open:before {
+        content: "-";
+        color: #f04;
+    }
+
+    section.documentation .declaration > .individual > .name {
+        color: #84D284;
+    }
+
+    section.documentation .declaration > .individual > .template_constraint {
+        display: block;
+
+        margin-top: 0.25em;
+        font-style: italic;
+    }
+
+    section.documentation.hide_template_constraints
+    .declaration > .individual > .template_constraint {
+        display: none;
+    }
+
+    section.documentation .parameter_list {
+    }
+
+    section.documentation .declaration .parameter_name,
+    section.documentation .parameter_list > dt > .parameter_name {
+        color: #84D284;
+    }
+
+    body.js section.documentation .definition {
+        font-size: 12pt;
+    }
+
+    body.js section.documentation .definition:not(.open) > :not(.summary) {
+        display: none;
+    }
+
+    section.documentation .declaration.enum
+    + .definition:not(.open) > :not(.summary) {
+        display: block;
+    }
+
+    section.documentation .declaration {
+        clear: left;
+    }
+
+    section.documentation .enum_members {
+        display: table;
+    }
+
+    section.documentation .enum_members > .decl_row {
+        display: table-row;
+    }
+
+    section.documentation .enum_members > .decl_row > * {
+        display: table-cell;
+
+        padding-bottom: 0.5em;
+    }
+
+    section.documentation .enum_members > .decl_row:last-child > * {
+        padding-bottom: 0;
+    }
+
+    section.documentation .enum_members > .decl_row > .declaration {
+        padding-right: 1em;
+    }
+
+    section.documentation .enum_members > .decl_row > .definition > .summary {
+        margin: 0;
+    }
+
+    section.documentation > div > .summary,
+    section.documentation .definition > .summary {
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+
+        font-size: 12pt;
+    }
+
+    section.documentation .parameter_list.caption {
+        font-weight: bold;
+    }
+
+    section.documentation .parameter_list {
+        margin: 0.5em 0;
+        padding: 0.5em 1em;
+
+        background-color: #2d2d2d;
+        color: #fff;
+    }
+
+    section.documentation .parameter_list > dt {
+        display: inline-block;
+        margin: 0.25em 0;
+
+        font-size: 1em;
+    }
+
+    section.documentation .parameter_list > dt > .parameter_name {
+    }
+
+    section.documentation .parameter_list > dd {
+        margin: 0 0 0 1em;
+    }
+
+    section.documentation .parameter_list > dd:after {
+        content: "\A";
+        white-space: pre;
+    }
+
+    section.documentation pre > code {
+        font-size: 12pt;
+        padding-left: 0;
+    }
+}
+
+/* Small size screens and up */
+@media screen and (min-width: 768px) {
+    section.documentation .definition {
+        margin-left: 2em;
+    }
+}
+
+/* Medium size screens and up */
+@media screen and (min-width: 960px) {
+    #main > nav > menu  {
+        padding: 0 1em;
+    }
+
+    #main > nav > menu > button {
+        width: 100%;
+    }
+
+    #main > .content.project_list {
+        width: 100%;
+    }
+}
+
+/* Large screens */
+@media screen and (min-width: 1200px) {
+}

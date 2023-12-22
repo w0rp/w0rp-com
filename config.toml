@@ -1,3 +1,8 @@
 baseURL = 'https://w0rp.com'
 languageCode = 'en-us'
 title = 'w0rp zone'
+paginate = 10
+paginatePath = "/blog/page/"
+
+[params]
+    description = "The opinions of \"w0rp\", a cheery, but stubborn, programmer."

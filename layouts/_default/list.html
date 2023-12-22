@@ -1,8 +1,11 @@
 {{ define "main" }}
-  {{ range (where .Site.RegularPages "Section" "blog") }}
+  {{ $pages := .Pages }}
+  {{ $paginator := .Paginate $pages }}
+
+  {{ range $paginator.Pages }}
     <article itemscope itemtype="http://schema.org/Article">
       <header>
-        <h1 itemprop="name"><a class="article_link" href="{{ .Page.URL }}" itemprop="url" content="{{ .Page.URL }}">{{ .Page.Title }}</a></h1>
+        <h1 itemprop="name"><a class="article_link" href="{{ .Page.Permalink }}" itemprop="url" content="{{ .Page.Permalink }}">{{ .Page.Title }}</a></h1>
         <ul class="post_metadata">
           <li class="author">
             <a class="name" itemprop="author" href="mailto:dev@w0rp.com">w0rp</a>
@@ -13,4 +16,19 @@
       </header>
     </article>
   {{ end }}
+
+  <nav class="page_navigation">
+    <ul>
+      {{ if $paginator.HasPrev }}
+        <li class="prev_page_link">
+          <a href="{{ $paginator.Prev.URL }}">Newer</a>
+        </li>
+      {{ end }}
+      {{ if $paginator.HasNext }}
+        <li class="next_page_link">
+          <a href="{{ $paginator.Next.URL }}">Older</a>
+        </li>
+      {{ end }}
+    </ul>
+  </nav>
 {{ end }}

@@ -22,34 +22,34 @@
 
     {{- partial "head.html" . -}}
   </head>
-    <body>
-        {{- partial "header.html" . -}}
-        <div id="main">
-          <div class="content">
-            {{- block "main" . }}{{- end }}
-          </div>
-          <nav>
-            <aside class="article_archive">
-              <header>Archive</header>
-              <ol>
-                {{ range (where .Site.RegularPages "Section" "blog").GroupByDate "January 2006" }}
-                  <li><a href="/blog/date/{{ (index .Pages 0).Date.Format "2006/01" }}/">{{ .Key }}</a></li>
-                {{ end }}
-              </ol>
-            </aside>
-          </nav>
-        </div>
-        {{- partial "footer.html" . -}}
+  <body>
+    {{- partial "header.html" . -}}
+    <div id="main">
+      <div class="content">
+        {{- block "main" . }}{{- end }}
+      </div>
+      <nav>
+        <aside class="article_archive">
+          <header>Archive</header>
+          <ol>
+            {{ range (where .Site.RegularPages "Section" "blog").GroupByDate "January 2006" }}
+              <li><a href="/blog/date/{{ (index .Pages 0).Date.Format "2006/01" }}/">{{ .Key }}</a></li>
+            {{ end }}
+          </ol>
+        </aside>
+      </nav>
+    </div>
+    {{- partial "footer.html" . -}}
 
-        {{ $highlightJS := resources.Get "js/third-party/highlight.pack.js" }}
-        {{ $globalJS := resources.Get "js/global.js" }}
-        {{ $highlightCodeJS := resources.Get "js/highlight-code.js" }}
+    {{ $highlightJS := resources.Get "js/third-party/highlight.pack.js" }}
+    {{ $globalJS := resources.Get "js/global.js" }}
+    {{ $highlightCodeJS := resources.Get "js/highlight-code.js" }}
 
-        {{ $js := slice $highlightJS $globalJS $highlightCodeJS | resources.Concat "static/js/main-site-bundle.js" | minify | fingerprint }}
+    {{ $js := slice $highlightJS $globalJS $highlightCodeJS | resources.Concat "static/js/main-site-bundle.js" | minify | fingerprint }}
 
-        <script
-          src="{{ $js.Permalink }}{{ if $assetBusting }}?{{ now.Unix }}{{ end }}"
-          integrity="{{ $js.Data.Integrity }}"
-        ></script>
-    </body>
+    <script
+      src="{{ $js.Permalink }}{{ if $assetBusting }}?{{ now.Unix }}{{ end }}"
+      integrity="{{ $js.Data.Integrity }}"
+    ></script>
+  </body>
 </html>

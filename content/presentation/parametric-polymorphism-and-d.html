@@ -1,0 +1,585 @@
+---
+title: Parametric Polymorphism and The D Programming Language
+date: 2018-05-26 21:38:23
+---
+<section>
+    <h1>Parametric Polymorphism and The D Programming Language</h1>
+</section>
+<section>
+    <h2>What Do We Want from Programming Languages?</h2>
+    <ul class="fragment">
+        <li>Conciseness</li>
+        <li>Readability</li>
+        <li>Performance</li>
+        <li>Correctness</li>
+    </ul>
+</section>
+<section>
+    <h2>Why Is This Hard to Achieve?</h2>
+    <p class="fragment">
+        Conciseness and readability are more achievable
+        when a language requires fewer type annotations
+        in order to work.
+    </p>
+    <p class="fragment">
+        Performance and correctness are more achievable
+        with the presence of type information.
+    </p>
+    <p class="fragment">
+        Achieving <em>all</em> of our goals requires a concise
+        way of expressing operations of types of
+        objects <em>generically</em>.
+    </p>
+</section>
+<section>
+    <h2>How Do We Attempt to Achieve This?</h2>
+    <p>Two approaches:</p>
+    <ul>
+        <li>Just-In-Time Compilation (PyPy, V8, HHVM, etc.)</li>
+        <li>Type Parameterisation (C++, Java/Scala (kind of), Swift, D, Rust, etc.)</li>
+    </ul>
+</section>
+<section>
+    <section>
+        <h2>Solving Generic Problems in Python</h2>
+        <h3>(And in other dynamically-typed languages)</h3>
+        <ul>
+            <li>Throw away types</li>
+            <li>Rely on duck typing and tests</li>
+        </ul>
+    </section>
+    <section>
+<pre><code class="python"># Create a one-to-many mapping from a sequence of pairs.
+def to_many(sequence_of_pairs):
+    mapping = {}
+
+    for left, right in sequence_of_pairs:
+        mapping.setdefault(left, []).append(right)
+
+    return mapping
+</code></pre>
+<pre class="fragment"><code>to_many([(1, 2), (1, 3)]) == {1: [2, 3]}                    # lists</code></pre>
+<pre class="fragment"><code>to_many(((1, 2), (1, 3))) == {1: [2, 3]}                    # tuples</code></pre>
+<pre class="fragment"><code>to_many(OrderedDict(((1, 2), (1, 3))).items()) == {1: [3]}  # OrderedDict?</code></pre>
+<pre class="fragment"><code>to_many("garbage")                                          # Uh oh...</code></pre>
+<pre class="fragment"><code>to_many(42)                                                 # Help!</code></pre>
+</code></pre>
+    </section>
+    <section>
+        <table>
+            <thead>
+                <th>Pros</th>
+                <th>Cons</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <ul>
+                            <li>Concise</li>
+                            <li>Readable</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Wonderfully Ignorant</li>
+                            <li>Hard To Optimise</li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+</section>
+<section>
+    <section>
+        <h2>Why Type Parameters?</h2>
+        <p>
+            You need to apply algorithms over a range of type
+            to save yourself from going mad.
+        </p>
+        <div class="fragment">
+            <p>Look at a language without type parameters (C99):</p>
+<pre><code>// Sum a sequence of numbers.
+int sum(int* pointer, size_t length) {
+int total = 0;
+
+for(size_t index = 0; index &lt; length; index++) {
+    total += pointer[index];
+}
+
+return total;
+}
+</code></pre>
+        </div>
+        <p class="fragment">What about summing floats?</p>
+    </section>
+    <section>
+    <p>You have to write it again!</p>
+<pre><code>// Sum a sequence of floating point numbers.
+float sum_float(float* pointer, size_t length) {
+float total = 0;
+
+for(size_t index = 0; index &lt; length; index++) {
+    total += pointer[index];
+}
+
+return total;
+}
+</code></pre>
+    <p class="fragment">What about summing <em>double-precision</em> floats?</p>
+    </section>
+    <section>
+    <p>Write it again! ... and again.</p>
+<pre><code>// Sum a sequence of double-precision floating point numbers.
+double sum_double(double* pointer, size_t length) {
+double total = 0;
+
+for(size_t index = 0; index &lt; length; index++) {
+    total += pointer[index];
+}
+
+return total;
+}
+</code></pre>
+    <p class="fragment">Are you bored yet?</p>
+    </section>
+</section>
+<section>
+    <h2>What is Parametric Polymorphism?</h2>
+    <blockquote class="fragment">
+        <p>
+            <strong>Parametric polymorphism</strong>
+            is obtained when a function works
+            uniformly on a range of types; these types normally exhibit
+            some common structure.
+        <p>
+        <footer>Christopher Strachey, 1967</footer>
+    </blockquote>
+</section>
+<section>
+    <section>
+        <h2>Add Type Parameters</h2>
+        <p>
+            Let's take the code from before, but let's
+            make the number type itself a parameter of the function.
+        </p>
+        <div class="fragment">
+            <p>Let's move to C++:</p>
+<pre><code>// Sum a sequence of numbers.
+template&lt;typename Number&gt; Number sum(Number* pointer, size_t length) {
+    Number total = 0;
+
+    for(size_t index = 0; index &lt; length; index++) {
+        total += pointer[index];
+    }
+
+    return total;
+}
+</code></pre>
+        </div>
+    </section>
+    <section>
+        <p>Now it works for all numbers!</p>
+<pre><code>int int_array[3] = {1, 2, 3};
+float float_array[3] = {1, 2, 3};
+double double_array[3] = {1, 2, 3};
+long long_array[3] = {1, 2, 3};
+
+sum&lt;int&gt;(int_array, 3) == 6
+sum&lt;float&gt;(float_array, 3) == 6.0f
+// C++ can infer the type parameters, so we don't need to type them.
+sum(double_array, 3) == 6.0
+sum(long_array, 3) == 6L
+</code></pre>
+    </section>
+</section>
+<section>
+    <h2>Anything C++ Can Do, D Can Do Better</h2>
+    <p>D can do it too, and better.</p>
+<pre><code>// Sum a sequence of numbers.
+Number sum(Number)(Number[] numberSlice) {
+    Number total = 0;
+
+    foreach(number; numberSlice) {
+        total += number;
+    }
+
+    return total;
+}
+</code></pre>
+    <div class="fragment">
+        <p>The standard library ain't half-bad, too.</p>
+        <pre><code>import std.algorithm: sum;</code></pre>
+    </div>
+</section>
+<section>
+    <section>
+        <h2>But Aren't "Generics" Enough?</h2>
+        <p>The short answer is "no," the long answer involves shaming Java.</p>
+        <p class="fragment">Let's try and write <code>to_many</code> in Java...</p>
+    </section>
+    <section>
+        <p>Let's define a Pair first.</p>
+<pre><code>public class Example {
+    public static class Pair&lt;T, U&gt; {
+        final public T first;
+        final public U second;
+
+        public Pair(T first, U second) {
+            this.first = first;
+            this.second = second;
+        }
+
+        public static &lt;T, U&gt; Pair&lt;T, U&gt; of(T first, U second) {
+            return new Pair&lt;T, U&gt;(first, second);
+        }
+    }
+/* ... */
+</code></pre>
+    </section>
+    <section>
+        <p>Let's bang out the function.</p>
+<pre><code class="java">    static &lt;T, U&gt; HashMap&lt;T, ArrayList&lt;U&gt;&gt;
+    toMany(Collection&lt;Pair&lt;T, U&gt;&gt; sequenceOfPairs) {
+       HashMap&lt;T, ArrayList&lt;U&gt;&gt; mapping = new HashMap&lt;&gt;();
+
+       for (Pair&lt;T, U&gt; pair: sequenceOfPairs) {
+            if (!mapping.containsKey(pair.first)) {
+                mapping.put(pair.first, new ArrayList&lt;U&gt;());
+            }
+
+            mapping.get(pair.first).add(pair.second);
+       }
+
+       return mapping;
+    }
+</code></pre>
+    </section>
+<section>
+<pre><code class="java">    public static void main (String[] argv) {
+        HashMap&lt;Integer, List&lt;Integer&gt;&gt; expectedMapping = new HashMap&lt;&gt;();
+        expectedMapping.put(1, Arrays.asList(2, 3));
+
+        HashMap&lt;Integer, List&lt;Integer&gt;&gt; actualMapping = toMany(
+            Arrays.asList(Pair.of(1, 2), Pair.of(1, 3))
+        );
+
+        assert actualMapping.equals(expectedMapping);
+    }
+}
+</code></pre>
+<p class="fragment">What about other types? This only works for <code>Collection</code></p>
+</section>
+
+</section>
+<section>
+    <h2>"Generics" Are Too Limiting</h2>
+    <ol>
+        <li>Generics like in Java require some base type, like <code>Collection</code>.</li>
+        <li>You cannot write algorithms which will apply to <em>yet unknown types</em>.</li>
+        <li>To truly write generic code, you must be able to write code which accepts <em>new types</em>.</li>
+        <li><em>Parametric polymorphism</em> is about defining algorithms for <em>categories of types</em>.</li>
+    </ol>
+</section>
+<section>
+    <h2>Let's Write It In D!</h2>
+<pre><code class="d">import std.typecons: Tuple, tuple;
+
+U[][T] toMany(T, U)(Tuple!(T, U)[] sequenceOfPairs) {
+    U[][T] mapping;
+
+    foreach(pair; sequenceOfPairs) {
+        mapping[pair[0]] ~= pair[1];
+    }
+
+    return mapping;
+}
+
+<span class="fragment">// One cool feature: marry code with unit tests
+unittest {
+    assert(toMany([tuple(1, 2), tuple(1, 3)]) == [1: [2, 3]]);
+}</span>
+</code></pre>
+</section>
+<section>
+    <section>
+        <h2>Let's Make it More Generic</h2>
+        <p>Let's define a pair, even though we don't have concrete type.</p>
+<pre><code class="d">// Write a function template which acts on a pair.
+void pairTest(T)(T anything) {
+auto first = anything.first;
+auto second = anything.second;
+}
+
+// Write a value template which returns true
+// if such a function will compile for a given type.
+enum isPair(T) = __traits(compiles, pairTest!T);
+</code></pre>
+    </section>
+    <section>
+        <p>Make the function accept any type which acts like a pair.</p>
+<pre><code class="d">auto toMany(Pair)(Pair[] sequenceOfPairs) if(isPair!Pair) {
+alias T = typeof(sequenceOfPairs[0].first);
+alias U = typeof(sequenceOfPairs[0].second);
+
+U[][T] mapping;
+
+foreach(pair; sequenceOfPairs) {
+    mapping[pair.first] ~= pair.second;
+}
+
+return mapping;
+}
+</code></pre>
+    </section>
+    <section>
+    <p>Now the algorithm can be applied to <em>types not yet known.</em></p>
+<pre><code class="d">struct MyNewType(T, U) {
+T first; U second;
+
+this(T first, U second) {
+    this.first = first;
+    this.second = second;
+}
+
+MyNewType!(T, U) of(T, U)(T first, U second) {
+    return MyNewType!(T, U)(first, second);
+}
+}
+
+unittest {
+assert(toMany([MyNewType.of(1, 2), MyNewType.of(1, 3)]) == [1: [2, 3]]);
+}
+</code></pre>
+    </section>
+    <section>
+    <p>It doesn't work for <code>Tuple</code> any more though...</p>
+    <div class="fragment">
+        <p>...until we define properties for existing types.</p>
+<pre><code class="d">auto first(T)(T pair) { return pair[0]; }
+auto second(T)(T pair) { return pair[1]; }
+
+unittest {
+    auto someTuple = tuple(1, 2);
+    // Any f(x) can be rewritten x.f() in D.
+    auto first someTuple.first();
+    // Or even x.f
+    auto second = someTuple.second;
+    // It works again!
+    assert(toMany([tuple(1, 2), tuple(1, 3)]) == [1: [2, 3]]);
+}
+</code></pre>
+    </div>
+    </section>
+</section>
+<section>
+    <section>
+        <h2>Let's Go Even Further, Operate on Any Sequence</h2>
+<pre><code class="d">import std.range: isInputRange, ElementType;
+
+// Write the algorithm in terms of InputRange!
+auto toMany(R)(R sequenceOfPairs)
+if(isInputRange!R && IsPair!(ElementType!R)) {
+    alias T = typeof(sequenceOfPairs.front[0]);
+    alias U = typeof(sequenceOfPairs.front[1]);
+
+    U[][T] mapping;
+
+    foreach(pair; sequenceOfPairs) {
+        mapping[pair[0]] ~= pair[1];
+    }
+
+    return mapping;
+}
+</code></pre>
+    </section>
+    <section>
+        <h2>What are Ranges?</h2>
+        <p>Ranges are <em>categories of types</em> which represent "ranges" of elements.</p>
+        <p>An <code>InputRange</code> is <em>anything</em> which acts like this:</p>
+<pre><code class="d">T someRange;
+
+// Check if the range is empty.
+while(!someRange.empty) {
+    // Get the current value.
+    auto someElement = someRange.front;
+
+    // Advance to the next value.
+    someRange.popFront();
+}
+</code></pre>
+    </section>
+    <section>
+        <h2>std.range Predicates</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Predicate
+                    <th>Properties
+            <tbody>
+                <tr>
+                    <th>isInputRange
+                    <td>
+                        <code>.empty</code>,
+                        <code>.front</code>,
+                        <code>.popFront()</code>
+                <tr>
+                    <th>isForwardRange
+                    <td>
+                        <em>...</em>,
+                        <code>.save</code>,
+                <tr>
+                    <th>isBidirectionalRange
+                    <td>
+                        <em>...</em>,
+                        <code>.back</code>,
+                        <code>.popBack()</code>
+                <tr>
+                    <th>isRandomAccessRange
+                    <td>
+                        <em>...</em>,
+                        <code>[index]</code>
+                <tr>
+                    <th>isOutputRange
+                    <td>
+                        <code>.put(someValue)</code>
+        </table>
+        <p>
+            Worth mentioning: <code>hasLength</code>, <code>hasSlicing</code>, <code>isInfinite</code>.
+        </p>
+    </section>
+</section>
+<section>
+    <section>
+        <h2>Example Applications of Ranges</h2>
+        <p>Implementing <code class="bash">sort -u</code>.</p>
+<pre><code class="d">#!/usr/bin/env rdmd
+import std.stdio;
+import std.array;
+import std.algorithm;
+
+void main() {
+    stdin.byLineCopy(KeepTerminator.yes) // InputRange from stdin
+    .array                               // Collect all lines in an array
+    .sort                                // New InputRange, sorted items
+    .uniq                                // New InputRange, skipping duplicates
+    .copy(stdout.lockingTextWriter());   // Write to a stdout OutputRange.
+}
+</code></pre>
+    </section>
+    <section>
+        <p>FizzBuzz!</p>
+<pre><code class="d">import std.range: iota;
+import std.algorithm: map, each;
+import std.conv: to;
+import std.stdio: writeln;
+
+void main() {
+    iota(1, 101)
+    .map!(
+        number =>
+            number % 3 == 0 && number % 5 == 0 ? "FizzBuzz" :
+            number % 3 == 0 ? "Fizz" :
+            number % 5 == 0 ? "Buzz" :
+            number.to!string
+    )
+    .each!writeln;
+}
+</code></pre>
+    </section>
+    <section>
+        <p>Print the first 50 Fibonacci numbers.</p>
+<pre><code class="d">#!/usr/bin/env rdmd
+import std.range: recurrence, take;
+import std.algorithm: each;
+import std.stdio: writeln;
+
+void main() {
+    recurrence!((a, n) =&gt; a[0] + a[1])(1L, 1L)
+    .take(50)
+    .each!writeln;
+}
+</code></pre>
+    </section>
+    <section>
+        <p>Printing all ancestor directories.</p>
+<pre><code class="d">import std.range;
+import std.algorithm;
+import std.path;
+import std.file;
+import std.stdio;
+
+auto iterate(alias func, T)(T initialValue) {
+    return recurrence!((values, index) =&gt; func(values[0]))(initialValue);
+}
+
+void main() {
+    getcwd()                                 // get the working directory.
+    .iterate!dirName                         // An infinite range of ancestors.
+    .until(rootName(getcwd()), OpenRight.no) // Stop when we hit /, C:\, etc.
+    .each!writeln;                           // Print everything to stdout.
+}
+</code></pre>
+    </section>
+</section>
+<section>
+    <h2>Writing Ranges from Scratch</h2>
+    <p>Let's implement our <code>iterate</code> algorithm from scratch.</p>
+<pre><code class="d">struct IterateRange(alias func, T) {
+    private T value;
+    // isInfiniteRange!this == true
+    enum empty = false;
+    T front() { return value; }
+    void popFront() { value = func(value); }
+    this(T initialValue) {
+        value = initialValue;
+    }
+}
+
+// This will work basically as before.
+auto iterate(alias func, T)(T initialValue) {
+    return IterateRange!(func, T)(initialValue);
+}
+</code></pre>
+</section>
+<section>
+    <h2>What Have We Learned?</h2>
+    <ul>
+        <li>Generic algorithms are the ultimate form of code reuse.</li>
+        <li>Parametric Polymorphism is needed for true generic programming.</li>
+        <li>Primitives like ranges are fundamental building blocks of complex programs.</li>
+        <li>D is very good at letting you do all of this.</li>
+    </ul>
+</section>
+<section>
+    <h2>What I Didn't Discuss</h2>
+    <p>D has:</p>
+    <ul>
+        <li>A faster compilation time than just about anything.</li>
+        <li>Built-in coverage analysis.</li>
+        <li>Compile-time function execution.</li>
+        <li>Thread local variables and atomics.</li>
+        <li>Java-style classes and interfaces.</li>
+        <li>Inline assembly and SIMD instructions.</li>
+        <li>A built-in garbage collector and other memory allocation schemes.</li>
+        <li>Much more!</li>
+    </ul>
+</section>
+<section>
+    <h2>Other Notable Languages with Parametric Polymorphism</h2>
+    <ul>
+        <li>C++14 and C++17</li>
+        <li>Haskell</li>
+        <li>Rust</li>
+        <li>Swift</li>
+    </ul>
+</section>
+<section>
+    <h2>Thank You!</h2>
+    <p>Further reading:</p>
+    <ul>
+        <li>D Website: <a href="http://dlang.org/">http://dlang.org/</a></li>
+        <li>Free Online D book: <a href="http://ddili.org/ders/d.en/index.html">http://ddili.org/ders/d.en/index.html</a></li>
+        <li>Web Development in D: <a href="https://www.youtube.com/watch?v=Zs8O7MVmlfw">https://www.youtube.com/watch?v=Zs8O7MVmlfw</a></li>
+    </ul>
+</section>

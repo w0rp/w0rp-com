@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+{{ $assetBusting := not .Site.Params.disableAssetsBusting }}
+  <head>
+    <meta charset="UTF-8">
+
+    <!-- Licenses for software used in this page. -->
+    <link rel="license" type="text/plain" href="{{ absURL "text/highlight_license" }}" title="Licence for hightlight.js">
+
+    {{ $revealCSS := resources.Get "css/third-party/reveal.js/reveal.css" }}
+    {{ $droidsansCSS := resources.Get "css/droidsans.css" }}
+    {{ $revealThemeCSS := resources.Get "css/third-party/reveal.js/theme/black.css" }}
+    {{ $highlightCSS := resources.Get "css/highlight-obsidian.css" }}
+    {{ $revealCustomCSS := resources.Get "css/reveal-custom.css" }}
+
+    {{ $css := slice $revealCSS $droidsansCSS $revealThemeCSS $highlightCSS $revealCustomCSS | resources.Concat "static/css/presentation-bundle.css" | minify | fingerprint }}
+
+    <link rel="stylesheet"
+      href="{{ $css.Permalink }}{{ if $assetBusting }}?{{ now.Unix }}{{ end }}"
+      integrity="{{ $css.Data.Integrity }}"
+    >
+  </head>
+  <body>
+    {{- block "main" . }}{{- end }}
+
+    {{ $highlightJS := resources.Get "js/third-party/highlight.pack.js" }}
+    {{ $revealJS := resources.Get "js/third-party/reveal.js/reveal.js" }}
+    {{ $globalJS := resources.Get "js/global.js" }}
+    {{ $revealInitJS := resources.Get "js/reveal-js-init.js" }}
+    {{ $highlightCodeJS := resources.Get "js/highlight-code.js" }}
+
+    {{ $js := slice $highlightJS $revealJS $globalJS $revealInitJS $highlightCodeJS | resources.Concat "static/js/presentation-bundle.js" | minify | fingerprint }}
+
+    <script
+      src="{{ $js.Permalink }}{{ if $assetBusting }}?{{ now.Unix }}{{ end }}"
+      integrity="{{ $js.Data.Integrity }}"
+    ></script>
+  </body>
+</html>

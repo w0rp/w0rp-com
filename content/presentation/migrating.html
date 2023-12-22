@@ -1,0 +1,471 @@
+---
+title: Migrating Python Web Applications to Python 3
+date: 2017-11-19 00:00:00
+---
+<section>
+    <h1>Migrating Python Web Applications to Python 3</h1>
+    <hr>
+    <p>Follow along here: <a href="https://w0rp.com/presentation/migrating">w0rp.com/migrating</a></p>
+</section>
+<section>
+    <h2>Who am I?</h2>
+    <ul>
+        <li>Andrew Wray, Senior Developer at Wazoku Ltd</li>
+        <li>(Wazoku is hiring!)</li>
+        <li>Python programmer since 2008 (Just before 3.0 release)</li>
+        <li>Passions: Programming, language, music</li>
+    </ul>
+</section>
+<section>
+    <section>
+        <h2>What do I work on?</h2>
+        <p>During the day ...</p>
+        <ul>
+            <li>Spotlight: a single page web application</li>
+            <li>Built with Django and Angular</li>
+            <li>Ran on Python 2.7, now runs on 3.6!</li>
+        </ul>
+    </section>
+    <section>
+        <p>... but at night!</p>
+        <ul>
+            <li>ALE &mdash; A Vim plugin for checking and fixing your code</li>
+            <li>Songs and poems</li>
+        </ul>
+        <p>ALE: <a href="https://github.com/w0rp/ale">https://github.com/w0rp/ale</a></p>
+        <p>My demo album: <a href="http://holdon.world">holdon.world</a></p>
+    </section>
+</section>
+<section>
+    <h2>Overview</h2>
+    <ol>
+        <li>Motivation for upgrading</li>
+        <li>Upgrading to Python 3 methodically</li>
+        <li>How to address common issues</li>
+    </ol>
+</section>
+<section>
+    <h2>Motivation</h2>
+</section>
+<section>
+    <h2>Why Python 3?</h2>
+    <ul>
+       <li>Performance not a problem</li>
+       <li>Bug fixes</li>
+       <!-- This is better for mypy -->
+       <li>Better types (str, bytes, int)</li>
+       <li>Great new features</li>
+       <li>Django 2.0 will not support Python 2</li>
+    </ul>
+</section>
+<section>
+    <section>
+        <h2>Python 3 performance</h2>
+        <p>Probably the same, and going to get better.</p>
+        <p>Ignore generic benchmarks. <em>Run your own!</em></p>
+    </section>
+    <section>
+        <h3>Wazoku benchmarks</h3>
+        <p>I submitted some Ideas and averaged the time for POST requests.</p>
+        <p><strong>~349ms</strong> in Python 2, <strong>~330ms</strong> in Python 3.</p>
+        <p>Basically, no meaningful difference.</p>
+        <p>However, much less memory is now consumed in production.</p>
+    </section>
+    <section>
+        <blockquote>
+            <p>The Timsort algorithm used in list.sort() and sorted() now runs faster</p>
+            <footer>Whats New in Python 3.2?</footer>
+        </blockquote>
+        <blockquote>
+            <p>UTF-8 is now 2x to 4x faster. UTF-16 encoding is now up to 10x faster.</p>
+            <footer>Whats New in Python 3.3?</footer>
+        </blockquote>
+        <!-- Mention that this is used a lot by django-rest-framework -->
+        <blockquote>
+            <p>collections.OrderedDict is now implemented in C, which makes it 4 to 100 times faster.</p>
+            <footer>Whats New in Python 3.5?</footer>
+        </blockquote>
+    </section>
+    <section>
+        <blockquote>
+            <p>
+                The UTF-8 encoder is now up to 75 times as fast for error
+                handlers <i>ignore</i>, <i>replace</i>,
+                <i>surrogateescape</i>, <i>surrogatepass</i>
+            </p>
+            <footer>Whats New in Python 3.6?</footer>
+        </blockquote>
+        <blockquote>
+            <p>
+                Optimized case-insensitive matching and searching of
+                regular expressions. Searching some patterns can now be up
+                to 20 times faster.
+            </p>
+            <footer>Whats New in Python 3.7?</footer>
+        </blockquote>
+    </section>
+    <section>
+        <p>Performance improvements go where new development is.</p>
+        <p>New development means Python 3.</p>
+    </section>
+</section>
+<section>
+    <section>
+        <h2>New features in 3.x</h2>
+        <ul>
+            <li>Better <code>*x</code> and <code>**y</code></li>
+            <li>list comprehensions don't leak variables</li>
+            <li>Better <code>super()</code> and <code>class</code> declarations</li>
+            <li>More generators, <code>yield from</code></li>
+            <li><code>async</code> &ndash; <code>await</code></li>
+            <li>Type annotations for mypy</li>
+            <li>3.7 makes UTF-8 the default encoding, <em>finally</em></li>
+            <!-- Say, I won't get into all of these now -->
+            <li>Much more!</li>
+        </ul>
+    </section>
+    <section>
+        <p>Don't get ahead of yourself, however.</p>
+        <p>These features are great, but you can't upgrade all in one go.</p>
+        <p>Python 2 and 3 behave differently in subtle ways.</p>
+        <p>You will need to follow a methodical upgrade process.</p>
+    </section>
+</section>
+<section>
+    <h2>Upgrading</h2>
+</section>
+<section>
+    <h2>The upgrade process</h2>
+    <p>At a high level, all you need to do is...</p>
+    <ol>
+        <li>Install Python 3</li>
+        <li>Cover Python 2 code well (70%, 80%, ...)</li>
+        <li>Introduce Python 3 testing into CI</li>
+        <li>Start writing code which works in both versions</li>
+        <li>Achieve 100% test success in Python 3</li>
+        <li>Roll out in development, testing, production</li>
+        <li>Switch to Python 3 only</li>
+    </ol>
+</section>
+<section>
+    <h2>Install Python 3.6</h2>
+    <small>(or whatever Python 3 version)</small>
+    <h3>Ubuntu or Linux Mint</h3>
+    <pre><code class="bash"># Install the version you want via the deadsnakes PPA.
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt-get update
+sudo apt-get install python3.6 python3.6-dev python3.6-venv</code></pre>
+    <hr>
+    <h3>Mac OSX or Windows</h3>
+    <p>I <strong>strongly</strong> recommend using the official installer. <a href="https://www.python.org/downloads/release/python-362/">https://www.python.org/downloads/release/python-362/</a></p>
+    <hr>
+    <p>You could just compile Python. It's not too hard.</p>
+</section>
+<section>
+    <h2>Use Continuous Integration</h2>
+    <ul>
+        <li>Configure CI, test Python 2 and 3</li>
+        <li>Wazoku used Jenkins and Bash scripts</li>
+        <li>Travis CI and Tox are common</li>
+        <li>Use different virtualenvs for local testing</li>
+    </ul>
+    <p>Example here: <a href="https://github.com/w0rp/tox-travis-example">https://github.com/w0rp/tox-travis-example</a></p>
+</section>
+<section>
+    <h2>Mark progress with tests</h2>
+    <p>Run automated tests to measure Python 3 compatibility.</p>
+    <p>You can target certain tests with marks.</p>
+    <p><code>pytest -m python3_supported</code></p>
+    <pre><code class="python">@pytest.mark.python3_supported
+def test_really_important_thing(...):
+...</code></pre>
+    <p>You can also choose to skip some.</p>
+    <pre><code class="python">@pytest.mark.skipif(six.PY3)
+def test_really_important_thing(...):
+...</code></pre>
+    <p>Use CI to move forward (10% one week, 20% the next...)</p>
+</section>
+<section>
+    <section>
+        <h2>Localise problem imports</h2>
+        <p>Import code which fails on Python 3 locally.</p>
+        <p><em>Before:</em></p>
+        <pre><code class="python">from broken_in_python3 import important_function
+
+def do_something_important():
+important_function()</code></pre>
+        <p><em>After:</em></p>
+        <pre><code class="python">def do_something_important():
+from broken_in_python3 import important_function
+
+important_function()</code></pre>
+    </section>
+    <section>
+        <p>Localising imports will take you from output like this...</p>
+        <pre><code class="bash">$ pytest
+E..F.</code></pre>
+        <p>to output more like this.</p>
+        <pre><code class="bash">$ pytest
+......FFFFFFF..FF..</code></pre>
+        <p>You can get more of your tests to run.</p>
+    </section>
+</section>
+<section>
+    <h2>Use libraries that work</h2>
+    <p>Over 90% of the top 200 Python packages support Python 3: <a href="https://python3wos.appspot.com">https://python3wos.appspot.com</a></p>
+    <p>Stop using packages and versions that do not support Python 3.</p>
+    <p>Start using the packages that do.</p>
+</section>
+<section>
+    <section>
+        <h2>Adopt new syntax and semantics</h2>
+        <p>First thing's first. Write this in <strong>every</strong> Python file. (I mean it!)</p>
+        <pre style="font-size: 0.5em"><code class="python">from __future__ import absolute_import, division, print_function, unicode_literals</code></pre>
+        <p>The above will fix problems with...</p>
+        <ul>
+            <li>changes to import rules.</li>
+            <li><code class="python">x / y</code> returning different results.</li>
+            <li>using <code>print</code> as a statement.</li>
+            <li>strings not being... strings by default.</li>
+        </ul>
+        <p>flake8 plugin: <a href="https://github.com/xZise/flake8-future-import">https://github.com/xZise/flake8-future-import</a></p>
+    </section>
+    <section>
+        <h3>Syntax to avoid</h3>
+        <p><code class="python">print</code> statements</p>
+        <pre><code class="python">print x, y  # With the __future__ imports, this is a syntax error
+print(x, y) # This works in both versions with the __future__ imports</code></pre>
+        <p>Old <code class="python">except:</code> syntax</p>
+        <pre><code class="python">except ExceptionType, e:   # Only valid in Python 2
+except ExceptionType as e: # Works in both versions</code></pre>
+        <p><code class="python">.next()</code> for iterators</p>
+        <pre><code class="python">x = iterator.next() # Only valid in Python 2
+x = next(iterator)  # Works in both versions.</code></pre>
+        <p>Use <code class="python">list(x for x in ...)</code>, not <code class="python">[x for x in ...]</code></p>
+        <pre><code class="python">some_list = [x for x in range(3)]     # x is bound to function scope in 2.x
+some_list = list(x for x in range(3)) # x is not accessible on the outside</code></pre>
+    </section>
+</section>
+<section>
+    <section>
+        <h2>Don't get your strings tangled up</h2>
+        <p>Both Python versions offer <em>text sequence types</em> and <em>binary sequence types</em>.</p>
+        <p>They are named differently in each version.</p>
+        <p>Text should be your default, <em>not bytes</em>.</p>
+        <pre><code class="python">from __future__ import ..., unicode_literals # Remember this?
+
+some_text = 'foo'   # This is now `unicode` in Python 2, and `str` in Python 3.
+also_text = u'foo'  # Works in 2.7, removed in 3.0, added back in 3.3
+some_bytes = b'bar' # This is now `str` in Python 2, and `bytes` in Python 3.</code></pre>
+    </section>
+    <section>
+        <p>Never mix text and binary sequences.</p>
+        <pre><code class="python">confusion    = 'foo' + b'bar'                 # This doesn't work in 3
+text_result  = 'foo' + b'bar'.decode('utf-8') # This will work
+bytes_result = 'foo'.encode('utf-8') + b'bar' # This will also work</code></pre>
+        <!-- Mention that an entire talk could be devoted to strings alone. -->
+        <p>Remember: You <em>decode bytes</em>, and <em>encode text</em>.</p>
+        <p>Never the opposite.</p>
+        <hr>
+        <p>These are correct.</p>
+        <pre><code class="python">b'xyz'.decode('utf-8') # Correct, you decode some bytes into text
+'xyz'.encode('utf-8')  # Correct, you encode text into bytes
+</code></pre>
+        <p>These are wrong!</p>
+        <pre><code class="python">b'xyz'.encode('utf-8') # Wrong! Python 3 will raise AttributeError
+'xyz'.decode('utf-8')  # Wrong! Python 3 will raise AttributeError
+</code></pre>
+    </section>
+    <section>
+        <h3>The textual lifecycle</h3>
+        <p>Think of <em>byte sequences</em> and <em>text sequences</em> like so.</p>
+        <p><code class="bash">encoded -&gt; decoded -&gt; encoded</code></p>
+        <p><code class="bash">bytes -&gt; str -&gt; bytes</code></p>
+        <p><code class="bash">HTTP request -&gt; application -&gt; database</code></p>
+        <p>Libraries will almost always handle encoding for you.</p>
+    </section>
+</section>
+<section>
+    <h2>Gain confidence, and release!</h2>
+    <ul>
+        <li>Get your tests passing in Python 3</li>
+        <li>Gain confidence through quality tests</li>
+        <li>Roll out Python 3 gradually</li>
+        <li>Ship it, call it good (Wazoku did)</li>
+    </ul>
+    <p class="fragment">... You'll have to deal with a number of issues before you're done.</p>
+</section>
+<section>
+    <h2>Common issues</h2>
+</section>
+<section>
+    <h2>Install six for a compatibility layer</h2>
+    <p><a href="https://pythonhosted.org/six/">https://pythonhosted.org/six/</a></p>
+    <p><code class="bash">pip install six</code></p>
+    <p><code>six</code> offers a compatibility layer for many common symbols.</p>
+    <p><code>six</code> will fix most of your common standard library issues, so use it.</p>
+</section>
+<section>
+    <section>
+        <h2>Handling problems with builtins</h2>
+        <p>Builtins behave differently.</p>
+        <p>Here is how to fix those issues.</p>
+    </section>
+    <section>
+        <p>Use <code>range</code>, not <code>xrange</code>.</p>
+        <p>If you must have a generator, use <code class="python">six.moves</code></p>
+        <pre><code class="python">from six.moves import range # Make range compatible for this file
+
+a_generator = range(42) # Same as xrange(42) in 2, range(42) in 3</code></pre>
+        <p>Use <code>list(range(...))</code> when you must have a list.</p>
+        <pre><code class="python">some_generator = xrange(5) # Does not exist in Python 3
+something = range(5)       # list in 2, but the same as xrange(5) in 3
+a_list = list(range(5))    # A list in both</code></pre>
+        <p>This works for anything which returns an iterable.</p>
+        <pre><code class="python">some_list = list(may_return_list())</code></pre>
+        <p>Worst case scenario, you make a redundant copy.</p>
+    </section>
+    <section>
+        <p>Use expressions instead of <code>map</code> or <code>filter</code>.</p>
+        <p>Don't bother with this:</p>
+        <pre><code class="python">doubled_values = map(lambda x: x * 2, some_list) # a list in 2, a generator in 3
+odd_values = filter(lambda x: x % 0: some_list)  # list in 2, a generator in 3</code></pre>
+        <div class="fragment">
+            <p>Do this instead:</p>
+            <pre><code class="python">doubled_values = list(x * 2 for x in some_list)  # a list in each version
+odd_values = list(x for x in some_list if x % 0) # a list in each version</code></pre>
+        </div>
+        <div class="fragment">
+            <p>If you must use them, import the iterator versions.</p>
+            <pre><code class="python">from six.moves import filter, map # itertools.filter and itertools.imap in 2.x</code></pre>
+        </div>
+    </section>
+    <section>
+        <p><code class="python">reduce</code> is no longer a builtin in 3, for some reason.</p>
+        <p>Just import it when you use it.</p>
+        <pre><code class="python">from six.moves import reduce # Redundant in 2, but fixes code in 3
+
+product_result = reduce(lambda x, y: x * y, range(1, 5)) # Now you can use reduce</code></pre>
+    </section>
+</section>
+<section>
+    <h2>Type checking</h2>
+    <p>Types are different in 2 and 3. Use types from six instead.</p>
+    <p>Before:</p>
+    <pre><code class="python">isinstance(value, (int, long)) # Checking for integers
+isinstance(value, basestring)  # Checking for str or unicode</code></pre>
+    <div class="fragment">
+        <p>After:</p>
+        <pre><code class="python">isinstance(value, six.integer_types) # Checking for integers, no long in 3
+isinstance(value, six.string_types)  # basestring in 2, and str in 3 ...
+isinstance(value, six.text_type)     # unicode in 2, and str in 3
+isinstance(value, six.binary_type)   # Check for bytes in 3, or str in 2
+
+# If you really must, accept both, and convert your value...
+isinstance(value, (six.binary_type, six_text_type))</code></pre>
+    </div>
+</section>
+<section>
+    <h2>Iterating through dictionaries</h2>
+    <p>These do not work in Python 3</p>
+    <pre><code class="python">for key in some_dict.iterkeys(): ...
+for value in some_dict.itervalues(): ...
+for key, value in some_dict.iteritems(): ...</code></pre>
+    <div class="fragment">
+        <p>Use six functions instead.</p>
+        <pre><code class="python"># You can just do this instead in each version
+for key in some_dict: ...
+for value in six.itervalues(some_dict): ...
+for key, value in six.iteritems(some_dict): ...</code></pre>
+    </div>
+    <div class="fragment">
+        <p>There are view functions too.</p>
+        <pre><code class="python">for key in six.viewkeys(some_dict): ...
+for value in six.viewvalues(some_dict): ...
+for key, value in six.viewitems(some_dict): ...</code></pre>
+    </div>
+</section>
+<section>
+    <section>
+        <h2>Dealing with text and bytes</h2>
+        <p>A whole talk could be devoted to this alone.</p>
+        <p>Try and use text almost everywhere, not bytes.</p>
+        <p><code class="python">u''</code> always gives you text in 2.x and 3.3+</p>
+        <p><code class="python">b''</code> always gives you bytes in 2.6+ and 3.0+</p>
+        <p>Wazoku first adopted explicit literals, and then <code>unicode_literals</code></p>
+        <pre><code class="python">from __future__ import unicode_literals</code></pre>
+    </section>
+    <section>
+        <p>When you know the types, decode and encode.</p>
+        <pre><code class="python">a_string = some_data.decode('utf-8')
+some_data = a_string.encode('utf-8')</code></pre>
+        <p>Always explicitly specify the encoding.</p>
+        <p>The default encoding is often <code>ascii</code> in Python 2.</p>
+    </section>
+    <section>
+        <h3>Fuzzy text conversion</h3>
+        <p>A poor man's version here. (Find a good library instead)</p>
+        <pre><code class="python">def to_text(value, encoding='utf-8'):
+# Check for str in 2, and bytes in 3
+if isinstance(value, six.binary_type):
+    return value.decode(encoding)
+
+# Use six.text_type(x) instead of unicode(x) or str(x)
+return six.text_type(value)
+
+def to_bytes(value, encoding='utf-8'):
+# Re-encode binary data as utf-8, so we get exceptions for invalid bytes
+return to_text(value, encoding).encode('utf-8')</code></pre>
+        <p>Use <code>force_text</code> or <code>force_bytes</code> instead for Django code.</p>
+        <pre><code class="python">from django.utils.encoding import force_bytes, force_text</code></pre>
+    </section>
+</section>
+<section>
+    <h2>Handling URL functions</h2>
+    <p>Python 2 only:</p>
+    <pre><code class="python">from urlparse import urlparse, parse_qs
+from urllib import urlencode, quote_plus</code></pre>
+    <div class="fragment">
+        <p>Python 3 only:</p>
+        <pre><code class="python">from urllib.parse import urlparse, parse_qs, urlencode, quote_plus</code></pre>
+    </div>
+    <div class="fragment">
+        <p>Both with six:</p>
+        <pre><code class="python">from six.moves.urllib.parse import urlparse, parse_qs, urlencode, quote_plus</code></pre>
+        <p>See six documentation for other functions.</p>
+    </div>
+    <div class="fragment">
+        <p>Use the Django functions if you can, which work better.</p>
+        <pre><code class="python">from django.utils.http import urlencode, urlquote_plus</code></pre>
+    </div>
+</section>
+<section>
+    <h2>Other issues you will face</h2>
+    <ul>
+        <li><code class="python">urlencode</code> handles Unicode poorly in Python 2</li>
+        <li>Un-orderable types (You can't sort with <code class="python">None</code>)</li>
+        <li><code class="python">csv</code> changed to expect text sequences</li>
+        <li>No <code>cmp</code> for <code class="python">sorted</code> or <code class="python">itertools.groupby</code></li>
+        <li><code class="python">__str__</code>: Use <code class="python">@six.python_2_unicode_compatible</code></li>
+        <li><code class="python">__metaclass__</code>:  Use <code class="python">@six.with_metaclass</code></li>
+        <li><code class="python">u'%s' % b'foo'</code> produces weird results</li>
+    </ul>
+</section>
+<section>
+    <h2>Conclusion</h2>
+    <ul>
+        <li>Python 3 is the future</li>
+        <li>Migrating will make life hard at first</li>
+        <li>Python 3.6 will make life easier</li>
+        <li>Start upgrading now, it will take time</li>
+    </ul>
+</section>
+<section>
+    <h2>Thank You!</h2>
+    <p>Further reading:</p>
+    <ul>
+        <li>Django's advice: <a href="https://docs.djangoproject.com/en/1.11/topics/python3/">docs.djangoproject.com/en/1.11/topics/python3</a></li>
+        <li>six documentation: <a href="https://pythonhosted.org/six/">pythonhosted.org/six/</a></li>
+        <li>Another tool with good advice: <a href="http://python-future.org">python-future.org</a></li>
+    </ul>
+</section>

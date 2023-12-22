@@ -14,10 +14,8 @@ ways:
 * There's no need to maintain Python packages and keep them up to date.
 * nginx can be simplified to just serving the content.
 
-The source for the site must be kept private in order to hide particular
-locations not meant for public consumption, but I may eventually produce a
-template from which you can build your own w0rp style blog with your own
-content.
+The source for this site is available on GitHub
+[here](https://github.com/w0rp/w0rp-com).
 
 Because the site is entirely served as static content, there are no comment
 forms any more. In order to not lose all of the comments that have been left in

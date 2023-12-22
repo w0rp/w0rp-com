@@ -70,11 +70,6 @@ h5 {
     font-size: 1.1em;
 }
 
-textarea,
-input {
-    background-image: none;
-}
-
 button + button,
 a.button + a.button,
 button + a.button,
@@ -95,129 +90,6 @@ code {
      * don't mess up line height.
      */
     line-height: inherit;
-}
-
-form {
-    padding: 1em;
-
-    max-width: 50em;
-}
-
-form.busy,
-form.busy * {
-    cursor: wait;
-}
-
-/* Forms */
-form > ul {
-    list-style-type: none;
-
-    margin: 0;
-    padding: 0;
-}
-
-form > ul > li {
-    margin-top: 1em;
-}
-
-form > ul > li:first-child {
-    margin-top: 0;
-}
-
-form > ul > li > label {
-    display: block;
-
-    width: 100%;
-    margin-bottom: 0.5em;
-
-    font-weight: bold;
-
-    color: #eee;
-}
-
-form > ul > li > select,
-form > ul > li > input,
-form > ul > li > textarea {
-    display: block;
-
-    font-size: 12pt;
-    width: 100%;
-}
-
-form > ul > li > input,
-form > ul > li > textarea {
-    border: 1px solid black;
-    padding: 0.5em;
-}
-
-form > ul > li > textarea {
-    /* Enough initial height for 5 lines with padding. */
-    min-height: 2em;
-    height: 6.5em;
-}
-
-/* Give taller screens a taller initial textarea size */
-@media screen and (min-height: 30em) {
-    form > ul > li > textarea {
-        height: 20em;
-    }
-}
-
-form > ul > li > .helptext {
-    display: block;
-    margin-top: 0.5em;
-}
-
-/* Checkboxes get special treatment */
-form > ul > li > input[type=checkbox] {
-    display: inline;
-}
-
-form > ul > li > input[type=checkbox] + .helptext {
-    display: inline;
-    margin-top: 0;
-    margin-left: 0.5em;
-}
-
-form > ul > li.buttons {
-    position: relative;
-    height: 2em;
-}
-
-form > ul > li.buttons > button,
-form > ul > li.buttons > .button {
-    margin: 0 1em 0 0;
-}
-
-form > ul > li.buttons > button:last-child,
-form > ul > li.buttons > .button:last-child {
-    font-weight: bold;
-}
-
-form > ul > li.error > label {
-    font-style: italic;
-}
-
-form > ul > li > ul.errorlist {
-    background-color: #7D3535;
-    color: white;
-
-    display: block;
-
-    padding: 0.5em 1em;
-    margin: 0 0 1em 0;
-
-    list-style-type: none;
-}
-
-form > ul > li > ul.errorlist > li {
-    display: inline-block;
-
-    font-weight: bold;
-}
-
-.ningen {
-    display: none;
 }
 
 /* Tiny screens and up. */
@@ -255,6 +127,7 @@ form > ul > li > ul.errorlist > li {
 
         text-shadow: black 5px 5px 10px;
         font-family: "Source Code Pro", monospace;
+        font-weight: bold;
         font-size: 40pt;
 
         -moz-user-select: none;
@@ -331,6 +204,8 @@ form > ul > li > ul.errorlist > li {
     }
 
     body > header > menu {
+        list-style-type: none;
+
         clear: both;
         position: relative;
 
@@ -350,36 +225,21 @@ form > ul > li > ul.errorlist > li {
         content: ":";
     }
 
-    body > header > menu > .site_nav_link {
+    body > header > menu > li > .site_nav_link {
         padding: 0.25em;
         font-size: 32px;
 
         text-decoration: none;
     }
 
-    body > header > menu > .site_nav_link.active {
+    body > header > menu > li > .site_nav_link.active {
         font-weight: bold;
     }
 
-    body > header > menu > .site_nav_link + .site_nav_link {
+    body > header > menu > li + li {
         margin-left: 0.5em;
         border-left: 1px solid #444;
         padding-left: 0.75em;
-    }
-
-    body > header > menu > .settings {
-        position: absolute;
-
-        right: 8px;
-        top: 8px;
-
-        width: 64px;
-        height: 64px;
-    }
-
-    body > header > menu > .settings > .icon {
-        width: 64px;
-        height: 64px;
     }
 
     /* Main site navigation. */
@@ -505,31 +365,8 @@ form > ul > li > ul.errorlist > li {
         padding: 20px 8px;
     }
 
-    body > header > menu > .site_nav_link {
+    body > header > menu > li > .site_nav_link {
         font-size: 24px;
-    }
-
-    body > header > menu > .settings {
-        right: 8px;
-        top: 8px;
-
-        width: 48px;
-        height: 48px;
-    }
-
-    body > header > menu > .settings:before {
-        top: 14px;
-        right: 64px;
-
-        font-size: 16px;
-    }
-
-    body > header > menu > .settings > .icon {
-        width: 48px;
-        height: 48px;
-
-        background-size: 384px 48px;
-        background-position: -336px 0;
     }
 
     #main > nav.fixed_when_big {

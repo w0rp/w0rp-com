@@ -1,0 +1,9 @@
+{{ define "main" }}
+  {{ $month := .Params.month }}
+
+  {{ range (where .Site.RegularPages "Section" "blog") }}
+    {{ if eq (.Date.Format "2006/01") $month }}
+      {{ partial "article_link.html" . }}
+    {{ end }}
+  {{ end }}
+{{ end }}

@@ -33,7 +33,7 @@
               <header>Archive</header>
               <ol>
                 {{ range (where .Site.RegularPages "Section" "blog").GroupByDate "January 2006" }}
-                  <li><a href="/blog/date/{{ (index .Pages 0).Date.Format "2006/02" }}/">{{ .Key }}</a></li>
+                  <li><a href="/blog/date/{{ (index .Pages 0).Date.Format "2006/01" }}/">{{ .Key }}</a></li>
                 {{ end }}
               </ol>
             </aside>
